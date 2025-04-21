@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  dwtygroup7:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dwtygroup7
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - sysops
+    depends_on:
+      - mysqldbcontainer
+      - rediscontainer
+
+  mysqldbcontainer:
+    image: mysql:8
+    container_name: mysqldbcontainer
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: laraveldb
+      MYSQL_USER: laraveluser
+      MYSQL_PASSWORD: laravelpass
+    volumes:
+      - mysqldbdatavolume:/var/lib/mysql
+    networks:
+      - sysops
+
+  rediscontainer:
+    image: redis
+    container_name: rediscontainer
+    volumes:
+      - redisdatavolume:/data
+    networks:
+      - sysops
+
+volumes:
+  mysqldbdatavolume:
+  redisdatavolume:
+
+networks:
+  sysops:
